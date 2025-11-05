@@ -1,1 +1,15 @@
+version: "3.8"
 services:
+  postgres:
+    image: postgres:15
+    container_name: gradebook-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: gradebook
+      POSTGRES_USER: gbuser
+      POSTGRES_PASSWORD: gbpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
