@@ -1,25 +1,30 @@
 package io.github.komorkaaa.gradebook.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import java.util.UUID;
 
+@Entity
+@Table(name = "students")
 public class Student {
-  private String id;
+  @Id
+  private UUID id = UUID.randomUUID();
+
+  @Column(nullable = false)
   private String name;
+
+  @Column(unique = true)
   private String email;
 
   public Student() {
-    this.id = UUID.randomUUID().toString();
+
   }
 
   public Student(String name, String email) {
-    this.id = UUID.randomUUID().toString();
     this.name = name;
     this.email = email;
   }
 
-  public String getId() {
+  public UUID getId() {
     return id;
   }
   public String getName() {
@@ -29,7 +34,7 @@ public class Student {
     return email;
   }
 
-  public void setId(String id) {
+  public void setId(UUID id) {
     this.id = id;
   }
   public void setName(String name) {

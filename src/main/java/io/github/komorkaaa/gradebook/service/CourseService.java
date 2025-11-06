@@ -1,6 +1,8 @@
 package io.github.komorkaaa.gradebook.service;
 
 import io.github.komorkaaa.gradebook.model.Course;
+import io.github.komorkaaa.gradebook.repository.CourseRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -8,32 +10,38 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CourseService {
-  private final Map<String, Course> courses = new ConcurrentHashMap<>();
+
+  private final CourseRepository courseRepository;
+
+  public CourseService(CourseRepository courseRepository) {
+    this.courseRepository = courseRepository;
+  }
 
   public List<Course> findAll() {
-    return new ArrayList<>(courses.values());
+    return courseRepository.findAll();
   }
 
   public Optional<Course> findById(String id) {
-    return Optional.ofNullable(courses.get(id));
+    return courseRepository.findById(id);
   }
 
-  public Course create(Course c) {
-    if (c.getId() == null || c.getId().isBlank()) {
+  public Course create(Course course) {
+    if (course.getId() == null || course.getId().isBlank()) {
       throw new IllegalArgumentException("Course id must be provided");
     }
-    courses.put(c.getId(), c);
-    return c;
+    return courseRepository.save(course);
   }
 
-  public Optional<Course>  update(String id, Course update) {
-    Course existing = courses.get(id);
-    if (existing == null) return Optional.empty();
-    existing.setName(update.getName());
-    return Optional.of(existing);
+  public Optional<Course> update(String id, Course updatedCourse) {
+    return courseRepository.findById(id).map(existing -> {
+      existing.setName(updatedCourse.getName());
+      return courseRepository.save(existing);
+    });
   }
 
   public boolean delete(String id) {
-    return courses.remove(id) != null;
+    if (!courseRepository.existsById(id)) return false;
+    courseRepository.deleteById(id);
+    return true;
   }
 }

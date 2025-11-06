@@ -1,7 +1,14 @@
 package io.github.komorkaaa.gradebook.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "courses")
 public class Course {
+  @Id
   private String id;
+
+  @Column(nullable = false)
   private String name;
 
   public Course() {}
