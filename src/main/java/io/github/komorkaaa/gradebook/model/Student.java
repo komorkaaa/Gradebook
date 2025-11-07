@@ -1,6 +1,7 @@
 package io.github.komorkaaa.gradebook.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -11,9 +12,11 @@ public class Student implements Serializable {
   @Id
   private UUID id = UUID.randomUUID();
 
+  @NotBlank
   @Column(nullable = false)
   private String name;
 
+  @Email
   @Column(unique = true)
   private String email;
 
