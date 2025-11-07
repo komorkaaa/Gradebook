@@ -1,12 +1,14 @@
 package io.github.komorkaaa.gradebook.model;
 
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
 @Table(name = "grades")
-public class Grade {
+public class Grade implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

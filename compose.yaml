@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   postgres:
     image: postgres:15
@@ -10,6 +9,23 @@ services:
       POSTGRES_USER: gbuser
       POSTGRES_PASSWORD: gbpass
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - gradebook-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: gradebook-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - gradebook-net
+
 volumes:
-  pgdata:
+  postgres_data:
+  redis_data:
+
+networks:
+  gradebook-net:

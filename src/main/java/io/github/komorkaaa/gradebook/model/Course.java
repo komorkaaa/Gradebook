@@ -2,9 +2,11 @@ package io.github.komorkaaa.gradebook.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "courses")
-public class Course {
+public class Course implements Serializable {
   @Id
   private String id;
 
