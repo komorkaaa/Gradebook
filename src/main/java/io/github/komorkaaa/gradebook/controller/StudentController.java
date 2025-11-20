@@ -1,5 +1,9 @@
 package io.github.komorkaaa.gradebook.controller;
 
+import io.github.komorkaaa.gradebook.dto.StudentCreateDto;
+import io.github.komorkaaa.gradebook.dto.StudentDto;
+import io.github.komorkaaa.gradebook.dto.StudentUpdateDto;
+import io.github.komorkaaa.gradebook.mapper.StudentMapper;
 import io.github.komorkaaa.gradebook.model.Student;
 import io.github.komorkaaa.gradebook.service.StudentService;
 
@@ -13,6 +17,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
+
   private final StudentService studentService;
 
   public StudentController(StudentService studentService) {

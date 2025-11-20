@@ -1,11 +1,15 @@
 package io.github.komorkaaa.gradebook.service;
 
+import io.github.komorkaaa.gradebook.dto.StudentDto;
 import io.github.komorkaaa.gradebook.model.Student;
 import io.github.komorkaaa.gradebook.repository.StudentRepository;
+import io.github.komorkaaa.gradebook.dto.StudentCreateDto;
+import io.github.komorkaaa.gradebook.dto.StudentUpdateDto;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -47,6 +51,7 @@ public class StudentService {
       return studentRepository.save(existing);
     });
   }
+
   @CacheEvict(value = {"students", "student"}, allEntries = true)
   public boolean delete(UUID id) {
     if (!studentRepository.existsById(id)) return false;

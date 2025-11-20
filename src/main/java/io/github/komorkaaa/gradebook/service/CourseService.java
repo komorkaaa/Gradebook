@@ -30,7 +30,7 @@ public class CourseService {
     return courseRepository.findById(id);
   }
 
-  @CachePut(value = "courses", key = "#course.id")
+  @CacheEvict(value = "courses", key = "'all'")
   public Course create(Course course) {
     if (course.getId() == null || course.getId().isBlank()) {
       throw new IllegalArgumentException("Course id must be provided");

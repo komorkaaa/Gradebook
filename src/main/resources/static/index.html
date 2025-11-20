@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gradebook App</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f5f7;
+        }
+
+        header {
+            background: #3949ab;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #3949ab;
+            margin-top: 40px;
+        }
+
+        .form-box {
+            padding: 15px;
+            border-radius: 5px;
+            background: #e8eaf6;
+            margin-bottom: 25px;
+        }
+
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        button {
+            cursor: pointer;
+            background: #3949ab;
+            color: white;
+            border: none;
+        }
+        button:hover {
+            background: #303f9f;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #3949ab;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header>📘 Gradebook Mini UI</header>
+
+<div class="container">
+
+    <!-- STUDENTS -->
+    <h2>Students</h2>
+
+    <div class="form-box">
+        <h3>Add Student</h3>
+        <input id="studentName" placeholder="Name">
+        <input id="studentEmail" placeholder="Email">
+        <button onclick="addStudent()">Add Student</button>
+    </div>
+
+    <table id="studentsTable">
+        <thead>
+        <tr><th>ID</th><th>Name</th><th>Email</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- COURSES -->
+    <h2>Courses</h2>
+
+    <div class="form-box">
+        <h3>Add Course</h3>
+        <input id="courseId" placeholder="Course ID (e.g. MATH101)">
+        <input id="courseName" placeholder="Course Name">
+        <button onclick="addCourse()">Add Course</button>
+    </div>
+
+    <table id="coursesTable">
+        <thead>
+        <tr><th>ID</th><th>Name</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- GRADES -->
+    <h2>Grades</h2>
+
+    <div class="form-box">
+        <h3>Add Grade</h3>
+
+        <label>Student:</label>
+        <select id="gradeStudentSelect"></select>
+
+        <label>Course:</label>
+        <select id="gradeCourseSelect"></select>
+
+        <label>Score:</label>
+        <input id="gradeScore" placeholder="Score (0-5)">
+
+        <label>Note (optional):</label>
+        <input id="gradeNote" placeholder="Short note">
+
+        <button onclick="addGrade()">Add Grade</button>
+    </div>
+
+    <table id="gradesTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Score</th>
+            <th>Note</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+
+<script>
+    const API = "http://localhost:8080/api";
+
+    window.onload = () => {
+        loadStudents();
+        loadCourses();
+        loadGrades();
+    };
+
+    // ---------------------
+    // STUDENTS
+    // ---------------------
+    function loadStudents() {
+        fetch(`${API}/students`)
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.querySelector("#studentsTable tbody");
+                const select = document.getElementById("gradeStudentSelect");
+
+                tbody.innerHTML = "";
+                select.innerHTML = "";
+
+                data.forEach(s => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${s.id}</td>
+                            <td>${s.name}</td>
+                            <td>${s.email}</td>
+                        </tr>`;
+
+                    select.innerHTML += `
+                        <option value="${s.id}">
+                            ${s.name} (${s.id})
+                        </option>`;
+                });
+            });
+    }
+
+    function addStudent() {
+        const name = document.getElementById("studentName").value;
+        const email = document.getElementById("studentEmail").value;
+
+        fetch(`${API}/students`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({name, email})
+        }).then(loadStudents);
+    }
+
+    // ---------------------
+    // COURSES
+    // ---------------------
+    function loadCourses() {
+        fetch(`${API}/courses`)
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.querySelector("#coursesTable tbody");
+                const select = document.getElementById("gradeCourseSelect");
+
+                tbody.innerHTML = "";
+                select.innerHTML = "";
+
+                data.forEach(c => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${c.id}</td>
+                            <td>${c.name}</td>
+                        </tr>`;
+
+                    select.innerHTML += `
+                        <option value="${c.id}">
+                            ${c.name} (${c.id})
+                        </option>`;
+                });
+            });
+    }
+
+    function addCourse() {
+        const id = document.getElementById("courseId").value;
+        const name = document.getElementById("courseName").value;
+
+        fetch(`${API}/courses`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({id, name})
+        }).then(() => loadCourses());
+    }
+
+    // ---------------------
+    // GRADES
+    // ---------------------
+    function loadGrades() {
+        fetch(`${API}/grades`)
+            .then(r => r.json())
+            .then(data => {
+                const tbody = document.querySelector("#gradesTable tbody");
+                tbody.innerHTML = "";
+
+                data.forEach(g => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${g.id}</td>
+                            <td>${g.student?.name}</td>
+                            <td>${g.course?.name}</td>
+                            <td>${g.value}</td>
+                            <td>${g.note ?? "-"}</td>
+                            <td>${g.createdAt ?? "-"}</td>
+                        </tr>`;
+                });
+            });
+    }
+
+    function addGrade() {
+        const studentId = document.getElementById("gradeStudentSelect").value;
+        const courseId = document.getElementById("gradeCourseSelect").value;
+        const value = Number(document.getElementById("gradeScore").value);
+        const note = document.getElementById("gradeNote").value;
+
+        fetch(`${API}/grades`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                student: { id: studentId },
+                course: { id: courseId },
+                value,
+                note
+            })
+        }).then(loadGrades);
+    }
+
+</script>
+
+</body>
+</html>
